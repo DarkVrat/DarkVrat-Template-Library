@@ -3,11 +3,14 @@
 
 #include "utility.h"
 
-namespace DVTL {
+namespace DVTL 
+{
     template<typename T>
-    class allocator {
+    class allocator 
+    {
     public:
-        static inline T* allocate(const size_t& size = 1) {
+        static inline T* allocate(const size_t& size = 1) 
+        {
             T* ptr = static_cast<T*>(operator new(size * sizeof(T)));
             return ptr;
         }

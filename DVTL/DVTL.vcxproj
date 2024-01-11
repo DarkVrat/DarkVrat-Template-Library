@@ -144,6 +144,7 @@
   <ItemGroup>
     <ClInclude Include="headers\allocator.h" />
     <ClInclude Include="headers\utility.h" />
+    <ClInclude Include="headers\vector.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

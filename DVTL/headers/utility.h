@@ -1,12 +1,9 @@
 #ifndef DVTL_UTILITY_H
 #define DVTL_UTILITY_H
 
-namespace DVTL {
-	template<typename T>
-	inline T&& move(T&& obj) noexcept
-	{
-		return static_cast<T&&>(obj);
-	}
+namespace DVTL 
+{
+	template<typename T> inline T&& move(T& obj) noexcept { return static_cast<T&&>(obj); }
 }
 
 #ifndef __PLACEMENT_NEW_INLINE
