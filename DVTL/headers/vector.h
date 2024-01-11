@@ -2,6 +2,7 @@
 #define DVTL_VECTOR_H
 
 #include "allocator.h"
+#include "unique_ptr.h"
 
 namespace DVTL 
 {
@@ -15,9 +16,9 @@ namespace DVTL
 		explicit	vector(size_t size, const T& value);
 
 		vector(const vector& source);
-		vector(vector&& source)	noexcept;
-		vector& operator=(const vecotr& source);
-		vector& operator=(vector&& source) noexcept;
+		vector(vector&& source)					noexcept;
+		vector<T>& operator=(const vector& source);
+		vector<T>& operator=(vector&& source)	noexcept;
 
 		~vector() noexcept;
 
@@ -29,14 +30,14 @@ namespace DVTL
 		inline bool		empty()		const	noexcept { return m_size == 0; }
 
 		//references to vector elements
+		T& at(size_t index);
 		T& front();
 		T& back();
-		T& at(size_t index);
-		T& operator[](size_t index) noexcept;
-		const T& front()	const;
-		const T& back()		const;
-		const T& at(size_t index) const;
-		const T& operator[](size_t index) const noexcept;
+		T& operator[](size_t index)			noexcept;
+		const T& at(size_t index)			const;
+		const T& front()					const;
+		const T& back()						const;
+		const T& operator[](size_t index)	const noexcept;
 	
 		//working with data
 		void reserve(size_t count);
@@ -73,18 +74,163 @@ namespace DVTL
 		//const_reverse_iterator crbegin()	const;
 		//const_reverse_iterator crend()	const;
 	private:
-		size_t m_size;
 		size_t m_capacity;
+		size_t m_size;
 		T* m_data;
 	};
 	
+	
+
 	template<typename T>
-	inline void swap(vector<T>& left, vector<T>& right)
+	inline vector<T>::vector() noexcept : m_capacity(0), m_size(0), m_data(nullptr){}
+
+	template<typename T>
+	inline vector<T>::vector(size_t size) : m_capacity(size), m_size(m_capacity), m_data(allocator<T>::allocate(m_capacity)) {}
+
+	template<typename T>
+	inline vector<T>::vector(size_t size, const T& value) : m_capacity(size), m_size(m_capacity), m_data(allocator::allocate<T>(m_capacity))
 	{
-		left.swap(right);
+		for (size_t i = 0; i < size; i++)
+			allocator::construct(m_data, i, value);
+	}
+
+	template<typename T>
+	inline vector<T>::vector(const vector& source) : m_capacity(source.m_size), m_size(m_capacity), m_data(allocator::allocate<T>(m_capacity))
+	{
+		for (size_t i = 0; i < m_size; i++)
+			allocator::construct(m_data, i, source[i]);
+	}
+
+	template<typename T>
+	inline vector<T>::vector(vector&& source) noexcept : m_capacity(source.m_capacity), m_size(source.m_size), m_data(source.m_data)
+	{
+		source.m_capacity = 0;
+		source.m_size = 0;
+		source.m_data = nullptr;
+	}
+
+	template<typename T>
+	inline vector<T>& vector<T>::operator=(const vector& source)
+	{
+		if (source.m_data == m_data) return *this;
+
+		if (m_data != nullptr) {
+			for (size_t i = 0; i < m_size; i++)
+				allocator::destroy(m_data, i);
+			allocator::deallocate(m_data);
+		}
+
+		m_capacity = source.m_size;
+		m_size = m_capacity;
+		m_data = allocator::allocate<T>(m_capacity);
+		for (size_t i = 0; i < m_size; i++)
+			allocator::construct(m_data, i, source[i]);
+
+		return *this;
+	}
+
+	template<typename T>
+	inline vector<T>& vector<T>::operator=(vector&& source) noexcept
+	{
+		if (source.m_data == m_data) return *this;
+
+		if (m_data != nullptr) {
+			for (size_t i = 0; i < m_size; i++)
+				allocator::destroy(m_data, i);
+			allocator::deallocate(m_data);
+		}
+
+		m_capacity = source.m_capacity;
+		m_size = source.m_size;
+		m_data = source.m_data;
+
+		source.m_capacity = 0;
+		source.m_size = 0;
+		source.m_data = nullptr;
+
+		return *this;
+	}
+
+	template<typename T>
+	inline vector<T>::~vector() noexcept
+	{
+		for (size_t i = 0; i < m_size; i++)
+			allocator::destroy(m_data, i);
+		allocator::deallocate(m_data);
+	}
+
+
+	template<typename T>
+	inline T& vector<T>::at(size_t index)
+	{
+		if (index >= m_size) throw error;
+		return m_data[index];
+	}
+	template<typename T> inline T& vector<T>::front()	{ return at(0); }
+	template<typename T> inline T& vector<T>::back()	{ return at(m_size-1); }
+	template<typename T> inline T& vector<T>::operator[](size_t index) noexcept { return m_data[index]; }
+
+	template<typename T>
+	inline const T& vector<T>::at(size_t index) const
+	{
+		if (index >= m_size) throw error;
+		return m_data[index];
+	}
+	template<typename T> inline const T& vector<T>::front() const	{ return at(0); }
+	template<typename T> inline const T& vector<T>::back()	const	{ return at(m_size - 1); }
+	template<typename T> inline const T& vector<T>::operator[](size_t index) const noexcept { return m_data[index]; }
+
+	template<typename T>
+	inline void vector<T>::reserve(size_t count)
+	{
+		if (count <= m_capacity) return;
+
+		T* newData = allocator::allocate<T>(count);
+		unique_ptr<T> safePtr(newData);
+		
+		for (size_t i = 0; i < m_size; i++)
+			allocator::construct(newData, i, m_data[i]);
+
+		for (size_t i = 0; i < m_size; i++)
+			allocator::destroy(m_data, i);
+
+		allocator::deallocate(m_data);
+		m_data = safePtr.release();
+	}
+
+	template<typename T>
+	inline void vector<T>::resize(size_t new_size)
+	{
+	}
+
+	template<typename T>
+	inline void vector<T>::resize(size_t new_size, const T& value)
+	{
+	}
+
+	template<typename T>
+	inline void vector<T>::assign(size_t count, const T& value)
+	{
+	}
+
+	template<typename T>
+	inline void vector<T>::clear()
+	{
+	}
+
+	template<typename T>
+	inline void vector<T>::shrink_to_fit()
+	{
+	}
+
+	template<typename T>
+	inline void vector<T>::swap(vector& vector)
+	{
 	}
 
 }
+
+
 
 
 
