@@ -3,10 +3,8 @@
 
 namespace DVTL 
 {
-	class error {};
-
 	template<typename T> inline T&& move(T& obj) noexcept { return static_cast<T&&>(obj); }
-	
+
 	template<typename T> inline void swap(T& left, T& right) { left.swap(right); }
 }
 
