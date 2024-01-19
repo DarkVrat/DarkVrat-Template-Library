@@ -22,8 +22,8 @@ namespace DVTL
 
 	template<typename T> inline void swap(T& left, T& right) { left.swap(right); }
 
-	template<typename T> inline T& max(T& left, T& right) { return left > right ? left, right; }
-	template<typename T> inline T& min(T& left, T& right) { return left < right ? left, right; }
+	template<typename T> inline T& max(T& left, T& right) { return left > right ? left: right; }
+	template<typename T> inline T& min(T& left, T& right) { return left < right ? left: right; }
 }
 
 #ifndef __PLACEMENT_NEW_INLINE

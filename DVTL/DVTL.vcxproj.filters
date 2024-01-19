@@ -32,5 +32,8 @@
     <ClInclude Include="headers\unique_ptr.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
+    <ClInclude Include="headers\initializer_list.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
