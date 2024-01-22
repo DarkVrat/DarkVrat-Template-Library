@@ -1,29 +1,80 @@
 #ifndef DVTL_UTILITY_H
 #define DVTL_UTILITY_H
 
-namespace DVTL 
+namespace DVTL
 {
-	template<typename T> struct remove_reference			{ typedef T type; };
-	template<typename T> struct remove_reference<T&>		{ typedef T type; };
-	template<typename T> struct remove_reference<T&&>		{ typedef T type; };
+	template<typename T> struct Remove_reference		{ typedef T type; };
+	template<typename T> struct Remove_reference<T&>	{ typedef T type; };
+	template<typename T> struct Remove_reference<T&&>	{ typedef T type; };
 
-	template<typename T> using remove_reference_t = typename remove_reference<T>::type;
+	template<typename T> using Remove_reference_t = typename Remove_reference<T>::type;
 
-	template<typename T> constexpr bool is_lvalue_reference_v		= false;
-	template<typename T> constexpr bool is_lvalue_reference_v<T&>	= true;
+	template<typename T> constexpr bool Is_lvalue_reference_v = false;
+	template<typename T> constexpr bool Is_lvalue_reference_v<T&> = true;
 
-	template<typename T> constexpr remove_reference_t<T>&& move(T&& obj) noexcept { return static_cast<remove_reference_t<T>&&>(obj); }
-	template<typename T> constexpr T&& forward(remove_reference_t<T>& obj) noexcept { return static_cast<T&&>(obj); }
-	template<typename T> constexpr T&& forward(remove_reference_t<T>&& obj) noexcept 
+	template<typename T> constexpr Remove_reference_t<T>&& Move(T&& obj) noexcept	{ return static_cast<Remove_reference_t<T>&&>(obj); }
+	template<typename T> constexpr T&& Forward(Remove_reference_t<T>& obj) noexcept { return static_cast<T&&>(obj); }
+	template<typename T> constexpr T&& Forward(Remove_reference_t<T>&& obj) noexcept
 	{
-		static_assert(!is_lvalue_reference_v<T>, "bad forward call");
+		static_assert(!Is_lvalue_reference_v<T>, "bad forward call");
 		return static_cast<T&&>(obj);
 	}
 
-	template<typename T> inline void swap(T& left, T& right) { left.swap(right); }
+	template<typename T> inline void Swap(T& left, T& right) { left.Swap(right); }
 
-	template<typename T> inline T& max(T& left, T& right) { return left > right ? left: right; }
-	template<typename T> inline T& min(T& left, T& right) { return left < right ? left: right; }
+	template<typename T> inline T& Max(T& left, T& right) { return left > right ? left : right; }
+	template<typename T> inline T& Min(T& left, T& right) { return left < right ? left : right; }
+
+	template<typename T1, typename T2>
+	class Pair {
+		T1 First;
+		T2 Second;
+
+		constexpr Pair() :First(T1()), Second(T2()) {};
+		constexpr Pair(const T1& val1, const T2& val2) :First(val1), Second(val2) {};
+		constexpr Pair(const T1& val1, T2&& val2) :First(val1), Second(Move(val2)) {};
+		constexpr Pair(T1&& val1, const T2& val2) :First(Move(val1)), Second(val2) {};
+		constexpr Pair(T1&& val1, T2&& val2) :First(Move(val1)), Second(Move(val2)) {};
+		template<typename U1, typename U2> Pair(const pair<U1, U2>& right) :First(right.First), Second(right.Second) {};
+		template<typename U1, typename U2> Pair(const U1& val1, const U2 val2) :First(val1), Second(val2) {};
+		Pair(const Pair&) = default;
+		Pair(Pair&&) = default;
+
+		Pair& operator=(const Pair&) = default;
+		Pair& operator=(Pair&&) = default;
+		template<typename U1, typename U2> Pair& operator=(const Pair<U1, U2>& right);
+
+		~Pair() = default;
+
+		void Swap(Pair& p);
+	};
+
+	template<typename T1, typename T2>
+	template<typename U1, typename U2>
+	inline Pair<T1, T2>& Pair<T1, T2>::operator=(const Pair<U1, U2>& right)
+	{
+		First = right.First;
+		Second = right.Second;
+
+		return *this;
+	}
+
+	template<typename T1, typename T2>
+	inline void Pair<T1, T2>::Swap(Pair& p)
+	{
+		T1 temp_f(p.First);
+		T2 temp_s(p.Second);
+
+		p.First = First;
+		p.Second = Second;
+
+		First = temp_f;
+		Second = temp_s;
+	}
+
+	template<typename T>				bool Less(const T& left, const T& right)						{ return left < right; }
+	template<typename T1, typename T2>	bool Less(const Pair<T1, T2>& left, const Pair<T1, T2>& right)	{return left.First < right.First;}
+
 }
 
 #ifndef __PLACEMENT_NEW_INLINE

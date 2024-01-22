@@ -20,25 +20,25 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="headers\allocator.h">
+    <ClInclude Include="headers\Allocator.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
-    <ClInclude Include="headers\utility.h">
+    <ClInclude Include="headers\Utility.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
-    <ClInclude Include="headers\vector.h">
+    <ClInclude Include="headers\Vector.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
-    <ClInclude Include="headers\unique_ptr.h">
+    <ClInclude Include="headers\Unique_ptr.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
-    <ClInclude Include="headers\initializer_list.h">
+    <ClInclude Include="headers\Initializer_list.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
-    <ClInclude Include="headers\shared_ptr.h">
+    <ClInclude Include="headers\Shared_ptr.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
-    <ClInclude Include="headers\weak_ptr.h">
+    <ClInclude Include="headers\Weak_ptr.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
   </ItemGroup>

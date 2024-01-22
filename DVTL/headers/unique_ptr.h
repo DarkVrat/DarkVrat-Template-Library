@@ -6,25 +6,25 @@
 namespace DVTL 
 {
     template<typename T>
-    class unique_ptr 
+    class Unique_ptr 
     {
     public:
-                    unique_ptr()        noexcept;
-        explicit    unique_ptr(T* ptr)  noexcept;
+                    Unique_ptr()        noexcept;
+        explicit    Unique_ptr(T* ptr)  noexcept;
 
-        unique_ptr(const unique_ptr&)   = delete;
-        unique_ptr(unique_ptr&& source) noexcept;
+        Unique_ptr(const Unique_ptr&)   = delete;
+        Unique_ptr(Unique_ptr&& source) noexcept;
 
-        unique_ptr<T>& operator=(T* ptr);
-        unique_ptr<T>& operator=(const unique_ptr&)     = delete;
-        unique_ptr<T>& operator=(unique_ptr&& source)   noexcept;
+        Unique_ptr<T>& operator=(T* ptr);
+        Unique_ptr<T>& operator=(const Unique_ptr&)     = delete;
+        Unique_ptr<T>& operator=(Unique_ptr&& source)   noexcept;
 
-        ~unique_ptr() noexcept;
+        ~Unique_ptr() noexcept;
 
-        T* get() const;
-        T* release();
-        void reset(T* ptr);
-        void swap(unique_ptr& right);
+        T* Get() const;
+        T* Release();
+        void Reset(T* ptr);
+        void Swap(Unique_ptr& right);
 
         operator bool() const noexcept;
         T& operator *() const noexcept;
@@ -34,26 +34,26 @@ namespace DVTL
     };
 
     template<typename T>
-    inline unique_ptr<T>::unique_ptr() noexcept : m_storage(nullptr) {}
+    inline Unique_ptr<T>::Unique_ptr() noexcept : m_storage(nullptr) {}
 
     template<typename T>
-    inline unique_ptr<T>::unique_ptr(T* ptr) noexcept : m_storage(ptr) {}
+    inline Unique_ptr<T>::Unique_ptr(T* ptr) noexcept : m_storage(ptr) {}
 
     template<typename T>
-    inline unique_ptr<T>::unique_ptr(unique_ptr&& source) noexcept : m_storage(source.m_storage)
+    inline Unique_ptr<T>::Unique_ptr(Unique_ptr&& source) noexcept : m_storage(source.m_storage)
     {
         source.m_storage = nullptr;
     }
 
     template<typename T>
-    inline unique_ptr<T>& unique_ptr<T>::operator=(T* ptr)
+    inline Unique_ptr<T>& Unique_ptr<T>::operator=(T* ptr)
     {
         reset(ptr);
         return *this;
     }
 
     template<typename T>
-    inline unique_ptr<T>& unique_ptr<T>::operator=(unique_ptr&& source) noexcept
+    inline Unique_ptr<T>& Unique_ptr<T>::operator=(Unique_ptr&& source) noexcept
     {
         if (m_storage == source.m_storage) return *this;
 
@@ -65,19 +65,19 @@ namespace DVTL
     }
 
     template<typename T>
-    inline unique_ptr<T>::~unique_ptr() noexcept
+    inline Unique_ptr<T>::~Unique_ptr() noexcept
     {
         delete m_storage;
     }
 
     template<typename T>
-    inline T* unique_ptr<T>::get() const
+    inline T* Unique_ptr<T>::Get() const
     {
         return m_storage;
     }
 
     template<typename T>
-    inline T* unique_ptr<T>::release()
+    inline T* Unique_ptr<T>::Release()
     {
         T* ret = m_storage;
         m_storage = nullptr;
@@ -85,7 +85,7 @@ namespace DVTL
     }
 
     template<typename T>
-    inline void unique_ptr<T>::reset(T* ptr)
+    inline void Unique_ptr<T>::Reset(T* ptr)
     {
         if (m_storage == ptr) return;
 
@@ -94,7 +94,7 @@ namespace DVTL
     }
 
     template<typename T>
-    inline void unique_ptr<T>::swap(unique_ptr& right)
+    inline void Unique_ptr<T>::Swap(Unique_ptr& right)
     {
         T* temp = m_storage;
         m_storage = right.m_storage;
@@ -102,19 +102,19 @@ namespace DVTL
     }
 
     template<typename T>
-    inline unique_ptr<T>::operator bool() const noexcept
+    inline Unique_ptr<T>::operator bool() const noexcept
     {
         return static_cast<bool>(m_storage);
     }
 
     template<typename T>
-    inline T& unique_ptr<T>::operator*() const noexcept
+    inline T& Unique_ptr<T>::operator*() const noexcept
     {
         return *m_storage;
     }
 
     template<typename T>
-    inline T* unique_ptr<T>::operator->() const noexcept
+    inline T* Unique_ptr<T>::operator->() const noexcept
     {
         return m_storage;
     }

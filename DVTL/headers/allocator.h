@@ -5,30 +5,30 @@
 
 namespace DVTL 
 {
-    class allocator 
+    class Allocator 
     {
     public:
         template<typename T>
-        static inline T* allocate(const size_t& size = 1) 
+        static inline T* Allocate(const size_t& size = 1) 
         {
             T* ptr = static_cast<T*>(operator new(size * sizeof(T)));
             return ptr;
         }
 
-        template<typename T> static inline void construct(T* const ptr, const size_t& index, const T& obj) { new (ptr + index) T(obj); }
-        template<typename T> static inline void construct(T* const ptr, const size_t& index, T&& obj) { new (ptr + index) T(move(obj)); }
-        template<typename T> static inline void construct(T* const ptr, const T& obj) { new (ptr) T(obj); }
-        template<typename T> static inline void construct(T* const ptr, T&& obj) { new (ptr) T(move(obj)); }
+        template<typename T> static inline void Construct(T* const ptr, const size_t& index, const T& obj) { new (ptr + index) T(obj); }
+        template<typename T> static inline void Construct(T* const ptr, const size_t& index, T&& obj) { new (ptr + index) T(Move(obj)); }
+        template<typename T> static inline void Construct(T* const ptr, const T& obj) { new (ptr) T(obj); }
+        template<typename T> static inline void Construct(T* const ptr, T&& obj) { new (ptr) T(Move(obj)); }
 
         template<typename T, typename... Types>
-        static inline void constructForward(T* const ptr, const size_t& index, Types&&... params) { new (ptr + index) T(forward<Types>(params)...); }
+        static inline void ConstructForward(T* const ptr, const size_t& index, Types&&... params) { new (ptr + index) T(Forward<Types>(params)...); }
         template<typename T, typename... Types>
-        static inline void constructForward(T* const ptr, Types&&... params) { new (ptr) T(forward<Types>(params)...); }
+        static inline void ConstructForward(T* const ptr, Types&&... params) { new (ptr) T(Forward<Types>(params)...); }
 
-        template<typename T> static inline void destroy(T* const ptr, const size_t& index) { ptr[index].~T(); }
-        template<typename T> static inline void destroy(T* const ptr) { ptr->~T(); }
+        template<typename T> static inline void Destroy(T* const ptr, const size_t& index) { ptr[index].~T(); }
+        template<typename T> static inline void Destroy(T* const ptr) { ptr->~T(); }
 
-        template<typename T> static inline void deallocate(T* const ptr) noexcept { operator delete(ptr); }
+        template<typename T> static inline void Deallocate(T* const ptr) noexcept { operator delete(ptr); }
     };
 
 }

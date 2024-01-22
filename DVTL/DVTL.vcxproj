@@ -142,13 +142,13 @@
     <ClCompile Include="DVTL.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="headers\allocator.h" />
-    <ClInclude Include="headers\initializer_list.h" />
-    <ClInclude Include="headers\shared_ptr.h" />
-    <ClInclude Include="headers\unique_ptr.h" />
-    <ClInclude Include="headers\utility.h" />
-    <ClInclude Include="headers\vector.h" />
-    <ClInclude Include="headers\weak_ptr.h" />
+    <ClInclude Include="headers\Allocator.h" />
+    <ClInclude Include="headers\Initializer_list.h" />
+    <ClInclude Include="headers\Shared_ptr.h" />
+    <ClInclude Include="headers\Unique_ptr.h" />
+    <ClInclude Include="headers\Utility.h" />
+    <ClInclude Include="headers\Vector.h" />
+    <ClInclude Include="headers\Weak_ptr.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
