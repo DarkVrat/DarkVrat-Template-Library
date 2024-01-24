@@ -9,6 +9,7 @@ namespace DVTL
     class Unique_ptr 
     {
     public:
+        //constructors, operators= and destructor
                     Unique_ptr()        noexcept;
         explicit    Unique_ptr(T* ptr)  noexcept;
 
@@ -21,6 +22,7 @@ namespace DVTL
 
         ~Unique_ptr() noexcept;
 
+        //ptr functions
         T* Get() const;
         T* Release();
         void Reset(T* ptr);

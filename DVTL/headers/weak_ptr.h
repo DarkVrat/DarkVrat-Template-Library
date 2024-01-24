@@ -14,6 +14,7 @@ namespace DVTL {
 
 	template<typename T>
 	class Weak_ptr {
+		//constructors, operators= and destructor
 		constexpr				Weak_ptr() noexcept;
 		template<typename U>	Weak_ptr(const Weak_ptr<U>& other);
 		template<typename U>	Weak_ptr(Weak_ptr<U>&& other);
@@ -29,6 +30,7 @@ namespace DVTL {
 
 		~Weak_ptr();
 
+		//ptr functions
 		Shared_ptr<T> Lock()	const	noexcept;
 		bool Expired()			const	noexcept;
 		long Use_count()		const	noexcept;

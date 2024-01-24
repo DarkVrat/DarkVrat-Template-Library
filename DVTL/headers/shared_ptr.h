@@ -7,6 +7,7 @@
 namespace DVTL {
 	template<typename T>
 	class Shared_ptr {
+		//constructors, operators= and destructor
 		constexpr	Shared_ptr() noexcept;
 		explicit	Shared_ptr(T* ptr);
 		explicit	Shared_ptr(Unique_ptr<T>&& other);
@@ -29,6 +30,7 @@ namespace DVTL {
 
 		~Shared_ptr();
 
+		//ptr functions
 		operator bool()		const		noexcept;
 		T& operator*()		const		noexcept;
 		T* operator->()		const		noexcept;

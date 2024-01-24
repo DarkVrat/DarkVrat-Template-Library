@@ -144,6 +144,7 @@
   <ItemGroup>
     <ClInclude Include="headers\Allocator.h" />
     <ClInclude Include="headers\Initializer_list.h" />
+    <ClInclude Include="headers\Map.h" />
     <ClInclude Include="headers\Shared_ptr.h" />
     <ClInclude Include="headers\Unique_ptr.h" />
     <ClInclude Include="headers\Utility.h" />
