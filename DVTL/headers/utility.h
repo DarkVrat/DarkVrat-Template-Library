@@ -22,11 +22,11 @@ namespace DVTL
 
 	template<typename T> inline void Swap(T& left, T& right) { left.Swap(right); }
 
-	template<typename T> inline T& Max(T& left, T& right) { return left > right ? left : right; }
-	template<typename T> inline T& Min(T& left, T& right) { return left < right ? left : right; }
+	template<typename T> inline T Max(const T& left, const T& right) { return left > right ? left : right; }
+	template<typename T> inline T Min(const T& left, const T& right) { return left < right ? left : right; }
 
 	template<typename T1, typename T2>
-	class Pair {
+	struct Pair {
 		T1 First;
 		T2 Second;
 
@@ -35,7 +35,7 @@ namespace DVTL
 		constexpr Pair(const T1& val1, T2&& val2) :First(val1), Second(Move(val2)) {};
 		constexpr Pair(T1&& val1, const T2& val2) :First(Move(val1)), Second(val2) {};
 		constexpr Pair(T1&& val1, T2&& val2) :First(Move(val1)), Second(Move(val2)) {};
-		template<typename U1, typename U2> Pair(const pair<U1, U2>& right) :First(right.First), Second(right.Second) {};
+		template<typename U1, typename U2> Pair(const Pair<U1, U2>& right) :First(right.First), Second(right.Second) {};
 		template<typename U1, typename U2> Pair(const U1& val1, const U2 val2) :First(val1), Second(val2) {};
 		Pair(const Pair&) = default;
 		Pair(Pair&&) = default;

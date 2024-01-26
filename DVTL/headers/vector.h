@@ -103,10 +103,10 @@ namespace DVTL
 	{
 	public:
 		//constructors, operators= and destructor
-		iterator(T* ptr)								:ptr(ptr) {}
-		iterator(const Vector<T>::reverse_iterator& it) :ptr(++it.ptr) {}
-		iterator(const iterator& right)					:ptr(right.ptr) {}
-		iterator(iterator&& right) noexcept				:ptr(right.ptr) { right.ptr = nullptr; }
+		iterator(T* ptr)											:ptr(ptr) {}
+		iterator(const typename Vector<T>::reverse_iterator& it)	:ptr(++it.ptr) {}
+		iterator(const iterator& right)								:ptr(right.ptr) {}
+		iterator(iterator&& right) noexcept							:ptr(right.ptr) { right.ptr = nullptr; }
 		iterator& operator=(const iterator& right)		{ ptr = right.ptr; return *this; }
 		iterator& operator=(iterator&& right) noexcept	{ ptr = right.ptr; right.ptr = nullptr; return *this; }
 		~iterator() {}
@@ -138,8 +138,8 @@ namespace DVTL
 		}
 
 		//transformation
-		Vector<T>::const_iterator get_const() const		{ return Vector<T>::const_iterator(*this); }
-		Vector<T>::reverse_iterator get_revers() const	{ return Vector<T>::reverse_iterator(*this); }
+		typename Vector<T>::const_iterator get_const() const		{ return typename Vector<T>::const_iterator(*this); }
+		typename Vector<T>::reverse_iterator get_revers() const		{ return typename Vector<T>::reverse_iterator(*this); }
 
 		friend class Vector<T>;
 	private:
@@ -152,11 +152,11 @@ namespace DVTL
 	{
 	public:
 		//constructors, operators= and destructor
-		const_iterator(const T* ptr)								:ptr(ptr) {}
-		const_iterator(const Vector<T>::iterator& it)				:ptr(it.ptr) {}
-		const_iterator(const Vector<T>::const_reverse_iterator& it) :ptr(++it.ptr) {}
-		const_iterator(const const_iterator& right)					:ptr(right.ptr) {}
-		const_iterator(const_iterator&& right) noexcept				:ptr(right.ptr) { right.ptr = nullptr; }
+		const_iterator(const T* ptr)											:ptr(ptr) {}
+		const_iterator(const typename Vector<T>::iterator& it)					:ptr(it.ptr) {}
+		const_iterator(const typename Vector<T>::const_reverse_iterator& it)	:ptr(++it.ptr) {}
+		const_iterator(const const_iterator& right)								:ptr(right.ptr) {}
+		const_iterator(const_iterator&& right) noexcept							:ptr(right.ptr) { right.ptr = nullptr; }
 		const_iterator& operator=(const const_iterator& right)		{ ptr = right.ptr; return *this; }
 		const_iterator& operator=(const_iterator&& right) noexcept	{ ptr = right.ptr; right.ptr = nullptr; return *this; }
 		~const_iterator() {}
@@ -188,7 +188,7 @@ namespace DVTL
 		}
 
 		//transformation
-		Vector<T>::const_reverse_iterator get_straight() const { return Vector<T>::const_reverse_iterator(*this); }
+		typename Vector<T>::const_reverse_iterator get_revers() const { return typename Vector<T>::const_reverse_iterator(*this); }
 
 		friend class Vector<T>;
 	private:
@@ -201,10 +201,10 @@ namespace DVTL
 	{
 	public:
 		//constructors, operators= and destructor
-		reverse_iterator(T* ptr)							:ptr(ptr) {}
-		reverse_iterator(const Vector<T>::iterator& it)		:ptr(--it.ptr) {}
-		reverse_iterator(const reverse_iterator& right)		:ptr(right.ptr) {}
-		reverse_iterator(reverse_iterator&& right) noexcept :ptr(right.ptr) { right.ptr = nullptr; }
+		reverse_iterator(T* ptr)								:ptr(ptr) {}
+		reverse_iterator(const typename Vector<T>::iterator& it):ptr(--it.ptr) {}
+		reverse_iterator(const reverse_iterator& right)			:ptr(right.ptr) {}
+		reverse_iterator(reverse_iterator&& right) noexcept		:ptr(right.ptr) { right.ptr = nullptr; }
 		reverse_iterator& operator=(const reverse_iterator& right)		{ ptr = right.ptr; return *this; }
 		reverse_iterator& operator=(reverse_iterator right)	noexcept	{ ptr = right.ptr; right.ptr = nullptr; return *this; }
 		~reverse_iterator() {}
@@ -235,8 +235,8 @@ namespace DVTL
 		}
 
 		//transformation
-		Vector<T>::const_reverse_iterator get_const() const { return Vector<T>::const_reverse_iterator(&this); }
-		Vector<T>::iterator get_straight()	const			{ return Vector<T>::iterator(*this); }
+		typename Vector<T>::const_reverse_iterator get_const() const	{ return typename Vector<T>::const_reverse_iterator(&this); }
+		typename Vector<T>::iterator get_straight()	const				{ return typename Vector<T>::iterator(*this); }
 
 		friend class Vector<T>;
 	private:
@@ -249,11 +249,11 @@ namespace DVTL
 	{
 	public:
 		//constructors, operators= and destructor
-		const_reverse_iterator(const T* ptr)							:ptr(ptr) {}
-		const_reverse_iterator(const Vector<T>::reverse_iterator& it)	:ptr(it.ptr) {}
-		const_reverse_iterator(const Vector<T>::const_iterator& it)		:ptr(--it.ptr) {}
-		const_reverse_iterator(const const_reverse_iterator& right)		:ptr(right.ptr) {}
-		const_reverse_iterator(const_reverse_iterator&& right) noexcept :ptr(right.ptr) { right.ptr = nullptr; }
+		const_reverse_iterator(const T* ptr)									:ptr(ptr) {}
+		const_reverse_iterator(const typename Vector<T>::reverse_iterator& it)	:ptr(it.ptr) {}
+		const_reverse_iterator(const typename Vector<T>::const_iterator& it)	:ptr(--it.ptr) {}
+		const_reverse_iterator(const const_reverse_iterator& right)				:ptr(right.ptr) {}
+		const_reverse_iterator(const_reverse_iterator&& right) noexcept			:ptr(right.ptr) { right.ptr = nullptr; }
 		const_reverse_iterator& operator=(const const_reverse_iterator& right)		{ ptr = right.ptr; return *this; }
 		const_reverse_iterator& operator=(const_reverse_iterator right) noexcept	{ ptr = right.ptr; right.ptr = nullptr; return *this; }
 		~const_reverse_iterator() {}
@@ -284,7 +284,7 @@ namespace DVTL
 		}
 
 		//transformation
-		Vector<T>::const_iterator get_straight() const { return Vector<T>::const_iterator(*this); }
+		typename Vector<T>::const_iterator get_revers() const { return typename Vector<T>::const_iterator(*this); }
 
 		friend class Vector<T>;
 	private:
