@@ -63,6 +63,9 @@ private:
 	Node* balanceTree(Node* node);
 	Node* rotateLeft(Node* node);
 	Node* rotateRight(Node* node);
+	Node* removeFromTree(Node* node, const T_Key& val);
+	Node* findMin(Node* node);
+	Node* removeMin(Node* node);
 	int getHeight(Node* node);
 	int getBalanceFactor(Node* node);
 	size_t getSize(Node* node);
@@ -79,8 +82,8 @@ struct Map<T_Key, T_Value>::Node {
 
 	Node(const Pair<T_Key, T_Value>& value) : data(value), parent(nullptr), left(nullptr), right(nullptr), height(1), size(1) {}
 	Node(Pair<T_Key, T_Value>&& value) : data(Move(value)), parent(nullptr), left(nullptr), right(nullptr), height(1), size(1) {}
-
 	Node(const Node& right, Node* parentNode) : data(right.data), parent(parentNode), left(new Node(*right.left, this)), right(new Node(*right.right, this)), height(right.height), size(right.size) {}
+
 	~Node() {};
 };
 
@@ -326,8 +329,10 @@ inline void Map<T_Key, T_Value>::Swap(Map<T_Key, T_Value>& right)
 template<typename T_Key, typename T_Value>
 inline typename Map<T_Key, T_Value>::iterator Map<T_Key, T_Value>::Erase(const T_Key& key)
 {
-	//make erase
-	return iterator();
+	//iterator retIt = Find(key);
+	//retIt++;
+	m_root = removeFromTree(m_root, key);
+	return iterator(nullptr);
 }
 
 template<typename T_Key, typename T_Value>
@@ -448,6 +453,56 @@ inline typename Map<T_Key, T_Value>::Node* Map<T_Key, T_Value>::rotateRight(Node
 	updateHeightAndSize(node);
 	updateHeightAndSize(newRoot);
 	return newRoot;
+}
+
+template<typename T_Key, typename T_Value>
+inline typename Map<T_Key, T_Value>::Node* Map<T_Key, T_Value>::removeFromTree(Node* node, const T_Key& value)
+{
+	if (node == nullptr)
+		return nullptr;
+
+	if (value < node->data.First) {
+		node->left = removeFromTree(node->left, value);
+		if (node->left != nullptr) node->left->parent = node;
+	}
+	else if (value > node->data.First) {
+		node->right = removeFromTree(node->right, value);
+		if (node->right != nullptr) node->right->parent = node;
+	}
+	else {
+		Node* left = node->left;
+		Node* right = node->right;
+		delete node;
+
+		if (right == nullptr)
+			return left;
+		if (left == nullptr)
+			return right;
+
+		Node* minNode = findMin(right);
+		minNode->right = removeMin(right);
+		if (minNode->right != nullptr) minNode->right->parent = minNode;
+		minNode->left = left;
+		left->parent = minNode;
+
+		return balanceTree(minNode);
+	}
+
+	return balanceTree(node);
+}
+template<typename T_Key, typename T_Value>
+inline typename Map<T_Key, T_Value>::Node* Map<T_Key, T_Value>::findMin(Node* node) {
+	while (node->left != nullptr)
+		node = node->left;
+	return node;
+}
+template<typename T_Key, typename T_Value>
+inline typename Map<T_Key, T_Value>::Node* Map<T_Key, T_Value>::removeMin(Node* node) {
+	if (node->left == nullptr)
+		return node->right;
+	node->left = removeMin(node->left);
+	if (node->left != nullptr) node->left->parent = node;
+	return balanceTree(node);
 }
 
 template<typename T_Key, typename T_Value>
