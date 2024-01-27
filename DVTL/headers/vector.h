@@ -94,7 +94,7 @@ namespace DVTL
 		iterator ShiftRight(size_t count, const const_iterator& position);
 		void CheckValidIterInsert(const const_iterator& position);
 		void CheckValidIterErase(const const_iterator& position);
-		size_t CalculateNewCapacity(size_t capacity);
+		static size_t CalculateNewCapacity(size_t capacity);
 	};
 
 	//defining an iterator interface

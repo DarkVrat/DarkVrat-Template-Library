@@ -48,27 +48,31 @@ public:
 	iterator Insert(const T_Key& key, const T_Value& val);
 
 	//getting iterators begin and end
-//	iterator Begin();
+	iterator Begin() { return iterator(findMin(m_root)); }
 	iterator End() { return iterator(nullptr); }
-//	const_iterator Begin() const;
+	const_iterator Begin() const { return const_iterator(findMin(m_root)); }
 	const_iterator End() const { return const_iterator(nullptr); }
-//	const_iterator CBegin() const;
+	const_iterator CBegin() const { return const_iterator(findMin(m_root)); }
 	const_iterator CEnd() const { return const_iterator(nullptr); }
+
 private:
 	Node* m_root;
 
-	void deleteNodeWithChild(Node* ptr);
-	void updateHeightAndSize(Node* node);
-	Node* insertInTree(Node* node, Pair<T_Key, T_Value>&& pair);
-	Node* balanceTree(Node* node);
-	Node* rotateLeft(Node* node);
-	Node* rotateRight(Node* node);
-	Node* removeFromTree(Node* node, const T_Key& val);
-	Node* findMin(Node* node);
-	Node* removeMin(Node* node);
-	int getHeight(Node* node);
-	int getBalanceFactor(Node* node);
-	size_t getSize(Node* node);
+	static void deleteNodeWithChild(Node* ptr);
+	static void updateHeightAndSize(Node* node);
+	static Node* insertInTree(Node* node, Pair<T_Key, T_Value>&& pair);
+	static Node* balanceTree(Node* node);
+	static Node* rotateLeft(Node* node);
+	static Node* rotateRight(Node* node);
+	static Node* removeFromTree(Node* node, const T_Key& val);
+	static Node* findMin(Node* node);
+	static Node* removeMin(Node* node);
+	static int getHeight(Node* node);
+	static int getBalanceFactor(Node* node);
+	static size_t getSize(Node* node);
+
+	static Node* iteratorHelpIncrement(Node* node);
+	static Node* iteratorHelpDecrement(Node* node);
 };
 
 template<typename T_Key, typename T_Value>
@@ -109,15 +113,36 @@ public:
 	Pair<T_Key, T_Value>* operator->() const { return &(ptr->data); }
 
 	//mathematical operators
-	iterator& operator++();
-	iterator& operator--();
-	const iterator operator++(int);
-	const iterator operator--(int);
+	iterator& operator++() 
+	{ 
+		ptr = Map<T_Key, T_Value>::iteratorHelpIncrement(ptr); 
+		return *this; 
+	}
+
+	iterator& operator--()
+	{
+		ptr = Map<T_Key, T_Value>::iteratorHelpDecrement(ptr);
+		return this;
+	}
+
+	const iterator operator++(int) 
+	{ 
+		iterator it(ptr);
+		ptr = Map<T_Key, T_Value>::iteratorHelpIncrement(ptr); 
+		return it; 
+	}
+
+	const iterator operator--(int)
+	{
+		iterator it(ptr);
+		ptr = Map<T_Key, T_Value>::iteratorHelpDecrement(ptr);
+		return it;
+	}
 
 	//transformation
 	typename Map<T_Key, T_Value>::const_iterator get_const() const { return  typename Map<T_Key, T_Value>::const_iterator(*this); }
 
-	friend class  Map<T_Key, T_Value>;
+	friend class Map<T_Key, T_Value>;
 private:
 	typename Map<T_Key, T_Value>::Node* get() const { return ptr; }
 	typename Map<T_Key, T_Value>::Node* ptr;
@@ -145,10 +170,31 @@ public:
 	const Pair<T_Key, T_Value>* operator->() const { return &(ptr->data); }
 
 	//mathematical operators
-	const_iterator& operator++();
-	const_iterator& operator--();
-	const const_iterator operator++(int);
-	const const_iterator operator--(int);
+	const_iterator& operator++()
+	{
+		ptr = Map<T_Key, T_Value>::iteratorHelpIncrement(ptr);
+		return *this;
+	}
+
+	const_iterator& operator--()
+	{
+		ptr = Map<T_Key, T_Value>::iteratorHelpDecrement(ptr);
+		return *this;
+	}
+
+	const const_iterator operator++(int)
+	{
+		const_iterator it(ptr);
+		ptr = Map<T_Key, T_Value>::iteratorHelpIncrement(ptr);
+		return it;
+	}
+
+	const const_iterator operator--(int)
+	{
+		const_iterator it(ptr);
+		ptr = Map<T_Key, T_Value>::iteratorHelpDecrement(ptr);
+		return it;
+	}
 
 	friend class Map<T_Key, T_Value>;
 private:
@@ -329,10 +375,10 @@ inline void Map<T_Key, T_Value>::Swap(Map<T_Key, T_Value>& right)
 template<typename T_Key, typename T_Value>
 inline typename Map<T_Key, T_Value>::iterator Map<T_Key, T_Value>::Erase(const T_Key& key)
 {
-	//iterator retIt = Find(key);
-	//retIt++;
+	iterator retIt = Find(key);
+	retIt++;
 	m_root = removeFromTree(m_root, key);
-	return iterator(nullptr);
+	return retIt;
 }
 
 template<typename T_Key, typename T_Value>
@@ -528,6 +574,46 @@ inline size_t Map<T_Key, T_Value>::getSize(Node* node)
 	if (node == nullptr)
 		return 0;
 	return node->size;
+}
+
+template<typename T_Key, typename T_Value>
+inline typename Map<T_Key, T_Value>::Node* Map<T_Key, T_Value>::iteratorHelpIncrement(Node* node)
+{
+	if (node == nullptr) return nullptr;
+	Node* retNode = node;
+
+	if (retNode->right != nullptr) {
+		retNode = node->right;
+		while (retNode->left != nullptr)
+			retNode = retNode->left;
+	}
+	else {
+		while (retNode->parent != nullptr && retNode->parent->right == retNode)
+			retNode = retNode->parent;
+		retNode = retNode->parent;
+	}
+
+	return retNode;
+}
+
+template<typename T_Key, typename T_Value>
+inline typename Map<T_Key, T_Value>::Node* Map<T_Key, T_Value>::iteratorHelpDecrement(Node* node)
+{
+	if (node == nullptr) return nullptr;
+	Node* retNode = node;
+
+	if (retNode->left != nullptr) {
+		retNode = node->left;
+		while (retNode->right != nullptr)
+			retNode = retNode->right;
+	}
+	else {
+		while (retNode->parent != nullptr && retNode->parent->left == retNode)
+			retNode = retNode->parent;
+		retNode = retNode->parent;
+	}
+
+	return retNode;
 }
 
 template<typename T_Key, typename T_Value>

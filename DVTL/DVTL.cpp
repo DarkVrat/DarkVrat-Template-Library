@@ -1,35 +1,40 @@
 ﻿#include "headers/Map.h"
 #include <iostream>
 #include <iomanip>
+#include <map>
 
 void printHelper(DVTL::Map<int, float>::Node* node, int indent) {
     if (node != nullptr) {
-        printHelper(node->right, indent + 8);
+        printHelper(node->right, indent + 2);
 
-        if (node->parent == nullptr) {
-            std::cout << std::setw(indent) << "X/" << node->data.First << std::endl;
-        }
-        else {
-            std::cout << std::setw(indent) << node->parent->data.First<<"/" << node->data.First << std::endl;
-        }
+        if(node->parent==nullptr)
+            std::cout << std::setw(indent) << node->data.First << std::endl;
+        else if(node==node->parent->left)
+            std::cout << std::setw(indent) << "\\" << node->data.First << std::endl;
+        else
+            std::cout << std::setw(indent) << "/" << node->data.First << std::endl;
 
-        printHelper(node->left, indent + 8);
+        printHelper(node->left, indent + 2);
     }
 }
 
 int main() {   
         DVTL::Map<int, float> mapIF;
-        for (int i = 0; i < 15; i++) {
+        for (int i = 0; i < 31; i++) {
             mapIF.Insert(i, 0.f);
         }
 
-        printHelper(mapIF.getroot(), 0);
+        auto it = mapIF.Begin();
 
-        for (int i = 0; i < 5; i++) {
-            int a;
-            std::cin >> a;
-            mapIF.Erase(a);
-            printHelper(mapIF.getroot(), 0);
+        std::cout << it->First << std::endl;
+
+        for (int i = 0; i < 15; i++) {
+            it++;
+            std::cout << it->First << std::endl;
+        }
+        for (int i = 0; i < 12; i++) {
+            it--;
+            std::cout << it->First << std::endl;
         }
     
     return 0;
