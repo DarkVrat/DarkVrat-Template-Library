@@ -142,6 +142,7 @@
     <ClCompile Include="DVTL.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="headers\Algorithm.h" />
     <ClInclude Include="headers\Allocator.h" />
     <ClInclude Include="headers\Initializer_list.h" />
     <ClInclude Include="headers\Map.h" />

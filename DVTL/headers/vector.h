@@ -231,7 +231,7 @@ namespace DVTL
 		reverse_iterator operator+(int n) const { return reverse_iterator(ptr - n); }
 		reverse_iterator operator-(int n) const { return reverse_iterator(ptr + n); }
 		auto operator-(const reverse_iterator& other) const -> decltype(auto) {
-			return ptr - other.ptr;
+			return other.ptr - ptr;
 		}
 
 		//transformation
@@ -280,7 +280,7 @@ namespace DVTL
 		const_reverse_iterator operator+(int n) const	{ return const_reverse_iterator(ptr - n); }
 		const_reverse_iterator operator-(int n) const	{ return const_reverse_iterator(ptr + n); }
 		auto operator-(const const_reverse_iterator& other) const -> decltype(auto) {
-			return ptr - other.ptr;
+			return other.ptr - ptr;
 		}
 
 		//transformation
@@ -569,8 +569,6 @@ namespace DVTL
 	template<typename T>
 	inline typename Vector<T>::iterator Vector<T>::Erase(const const_iterator& first, const const_iterator& last)
 	{
-		if (first > last) return erase(last, first);
-
 		CheckValidIterErase(first);
 		CheckValidIterInsert(last);
 		ShiftLeft(last - first, first);

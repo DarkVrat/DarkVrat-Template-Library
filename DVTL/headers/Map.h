@@ -12,6 +12,8 @@ public:
 	struct Node;
 	class iterator;
 	class const_iterator;
+	class reverse_iterator;
+	class const_reverse_iterator;
 
 	//constructors, operators= and destructor
 	Map();
@@ -48,12 +50,19 @@ public:
 	iterator Insert(const T_Key& key, const T_Value& val);
 
 	//getting iterators begin and end
-	iterator Begin() { return iterator(findMin(m_root)); }
-	iterator End() { return iterator(nullptr); }
-	const_iterator Begin() const { return const_iterator(findMin(m_root)); }
-	const_iterator End() const { return const_iterator(nullptr); }
+	iterator Begin()	{ return iterator(findMin(m_root)); }
+	iterator End()		{ return iterator(nullptr); }
+	reverse_iterator RBegin()	{ return reverse_iterator(findMax(m_root)); }
+	reverse_iterator REnd()		{ return reverse_iterator(nullptr); }
+
+	const_iterator Begin()	const { return const_iterator(findMin(m_root)); }
+	const_iterator End()	const { return const_iterator(nullptr); }
 	const_iterator CBegin() const { return const_iterator(findMin(m_root)); }
-	const_iterator CEnd() const { return const_iterator(nullptr); }
+	const_iterator CEnd()	const { return const_iterator(nullptr); }
+	const_reverse_iterator RBegin()		const { return const_reverse_iterator(findMax(m_root)); }
+	const_reverse_iterator REnd()		const { return const_reverse_iterator(nullptr); }
+	const_reverse_iterator CRBegin()	const { return const_reverse_iterator(findMax(m_root)); }
+	const_reverse_iterator CREnd()		const { return const_reverse_iterator(nullptr); }
 
 private:
 	Node* m_root;
@@ -66,6 +75,7 @@ private:
 	static Node* rotateRight(Node* node);
 	static Node* removeFromTree(Node* node, const T_Key& val);
 	static Node* findMin(Node* node);
+	static Node* findMax(Node* node);
 	static Node* removeMin(Node* node);
 	static int getHeight(Node* node);
 	static int getBalanceFactor(Node* node);
@@ -98,6 +108,7 @@ class Map<T_Key, T_Value>::iterator
 public:
 	//constructors, operators= and destructor
 	iterator(typename Map<T_Key, T_Value>::Node* ptr) :ptr(ptr) {}
+	iterator(const typename Map<T_Key, T_Value>::reverse_iterator& it) :ptr(it.ptr) {}
 	iterator(const iterator& right) :ptr(right.ptr) {}
 	iterator(iterator&& right) noexcept :ptr(right.ptr) { right.ptr = nullptr; }
 	iterator& operator=(const iterator& right) { ptr = right.ptr; return *this; }
@@ -141,6 +152,7 @@ public:
 
 	//transformation
 	typename Map<T_Key, T_Value>::const_iterator get_const() const { return  typename Map<T_Key, T_Value>::const_iterator(*this); }
+	typename Map<T_Key, T_Value>::reverse_iterator get_revers() const { return typename Map<T_Key, T_Value>::reverse_iterator(*this); }
 
 	friend class Map<T_Key, T_Value>;
 private:
@@ -155,6 +167,7 @@ public:
 	//constructors, operators= and destructor
 	const_iterator(const typename Map<T_Key, T_Value>::Node* ptr) :ptr(ptr) {}
 	const_iterator(const typename Map<T_Key, T_Value>::iterator& it) :ptr(it.ptr) {}
+	const_iterator(const typename Map<T_Key, T_Value>::const_reverse_iterator& it) :ptr(it.ptr) {}
 	const_iterator(const const_iterator& right) :ptr(right.ptr) {}
 	const_iterator(const_iterator&& right) noexcept :ptr(right.ptr) { right.ptr = nullptr; }
 	const_iterator& operator=(const const_iterator& right) { ptr = right.ptr; return *this; }
@@ -195,6 +208,126 @@ public:
 		ptr = Map<T_Key, T_Value>::iteratorHelpDecrement(ptr);
 		return it;
 	}
+
+	//transformation
+	typename Map<T_Key, T_Value>::const_reverse_iterator get_revers() const { return typename Map<T_Key, T_Value>::const_reverse_iterator(*this); }
+
+	friend class Map<T_Key, T_Value>;
+private:
+	typename Map<T_Key, T_Value>::Node* get() const { return const_cast<typename Map<T_Key, T_Value>::Node*>(ptr); }
+	const typename Map<T_Key, T_Value>::Node* ptr;
+};
+
+//defining an iterator interface
+template<typename T_Key, typename T_Value>
+class Map<T_Key, T_Value>::reverse_iterator
+{
+public:
+	//constructors, operators= and destructor
+	reverse_iterator(typename Map<T_Key, T_Value>::Node* ptr) :ptr(ptr) {}
+	reverse_iterator(const typename Map<T_Key, T_Value>::iterator& it) :ptr(it.ptr) {}
+	reverse_iterator(const reverse_iterator& right) :ptr(right.ptr) {}
+	reverse_iterator(reverse_iterator&& right) noexcept :ptr(right.ptr) { right.ptr = nullptr; }
+	reverse_iterator& operator=(const reverse_iterator& right) { ptr = right.ptr; return *this; }
+	reverse_iterator& operator=(reverse_iterator&& right) noexcept { ptr = right.ptr; right.ptr = nullptr; return *this; }
+	~reverse_iterator() {}
+
+	//logical operators
+	bool operator==(const reverse_iterator& other) const { return ptr == other.ptr; }
+	bool operator!=(const reverse_iterator& other) const { return ptr != other.ptr; }
+
+	//data access
+	Pair<T_Key, T_Value>& operator*() const { return ptr->data; }
+	Pair<T_Key, T_Value>* operator->() const { return &(ptr->data); }
+
+	//mathematical operators
+	reverse_iterator& operator++()
+	{
+		ptr = Map<T_Key, T_Value>::iteratorHelpDecrement(ptr);
+		return *this;
+	}
+
+	reverse_iterator& operator--()
+	{
+		ptr = Map<T_Key, T_Value>::iteratorHelpIncrement(ptr);
+		return this;
+	}
+
+	const reverse_iterator operator++(int)
+	{
+		iterator it(ptr);
+		ptr = Map<T_Key, T_Value>::iteratorHelpDecrement(ptr);
+		return it;
+	}
+
+	const reverse_iterator operator--(int)
+	{
+		iterator it(ptr);
+		ptr = Map<T_Key, T_Value>::iteratorHelpIncrement(ptr);
+		return it;
+	}
+
+	//transformation
+	typename Map<T_Key, T_Value>::const_reverse_iterator get_const() const { return  typename Map<T_Key, T_Value>::const_reverse_iterator(*this); }
+	typename Map<T_Key, T_Value>::iterator get_revers() const { return typename Map<T_Key, T_Value>::iterator(*this); }
+
+	friend class Map<T_Key, T_Value>;
+private:
+	typename Map<T_Key, T_Value>::Node* get() const { return ptr; }
+	typename Map<T_Key, T_Value>::Node* ptr;
+};
+
+template<typename T_Key, typename T_Value>
+class Map<T_Key, T_Value>::const_reverse_iterator
+{
+public:
+	//constructors, operators= and destructor
+	const_reverse_iterator(const typename Map<T_Key, T_Value>::Node* ptr) :ptr(ptr) {}
+	const_reverse_iterator(const typename Map<T_Key, T_Value>::reverse_iterator& it) :ptr(it.ptr) {}
+	const_reverse_iterator(const typename Map<T_Key, T_Value>::const_iterator& it) :ptr(it.ptr) {}
+	const_reverse_iterator(const const_reverse_iterator& right) :ptr(right.ptr) {}
+	const_reverse_iterator(const_reverse_iterator&& right) noexcept :ptr(right.ptr) { right.ptr = nullptr; }
+	const_reverse_iterator& operator=(const const_reverse_iterator& right) { ptr = right.ptr; return *this; }
+	const_reverse_iterator& operator=(const_reverse_iterator&& right) noexcept { ptr = right.ptr; right.ptr = nullptr; return *this; }
+	~const_reverse_iterator() {}
+
+	//logical operators
+	bool operator==(const const_reverse_iterator& other) const { return ptr == other.ptr; }
+	bool operator!=(const const_reverse_iterator& other) const { return ptr != other.ptr; }
+
+	//data access
+	const Pair<T_Key, T_Value>& operator*() const { return ptr->data; }
+	const Pair<T_Key, T_Value>* operator->() const { return &(ptr->data); }
+
+	//mathematical operators
+	const_reverse_iterator& operator++()
+	{
+		ptr = Map<T_Key, T_Value>::iteratorHelpDecrement(ptr);
+		return *this;
+	}
+
+	const_reverse_iterator& operator--()
+	{
+		ptr = Map<T_Key, T_Value>::iteratorHelpIncrement(ptr);
+		return *this;
+	}
+
+	const const_reverse_iterator operator++(int)
+	{
+		const_iterator it(ptr);
+		ptr = Map<T_Key, T_Value>::iteratorHelpDecrement(ptr);
+		return it;
+	}
+
+	const const_reverse_iterator operator--(int)
+	{
+		const_iterator it(ptr);
+		ptr = Map<T_Key, T_Value>::iteratorHelpIncrement(ptr);
+		return it;
+	}
+
+	//transformation
+	typename Map<T_Key, T_Value>::const_iterator get_revers() const { return typename Map<T_Key, T_Value>::const_iterator(*this); }
 
 	friend class Map<T_Key, T_Value>;
 private:
@@ -537,13 +670,24 @@ inline typename Map<T_Key, T_Value>::Node* Map<T_Key, T_Value>::removeFromTree(N
 	return balanceTree(node);
 }
 template<typename T_Key, typename T_Value>
-inline typename Map<T_Key, T_Value>::Node* Map<T_Key, T_Value>::findMin(Node* node) {
+inline typename Map<T_Key, T_Value>::Node* Map<T_Key, T_Value>::findMin(Node* node) 
+{
 	while (node->left != nullptr)
 		node = node->left;
 	return node;
 }
+
 template<typename T_Key, typename T_Value>
-inline typename Map<T_Key, T_Value>::Node* Map<T_Key, T_Value>::removeMin(Node* node) {
+inline typename Map<T_Key, T_Value>::Node* Map<T_Key, T_Value>::findMax(Node* node)
+{
+	while (node->right != nullptr)
+		node = node->right;
+	return node;
+}
+
+template<typename T_Key, typename T_Value>
+inline typename Map<T_Key, T_Value>::Node* Map<T_Key, T_Value>::removeMin(Node* node) 
+{
 	if (node->left == nullptr)
 		return node->right;
 	node->left = removeMin(node->left);
