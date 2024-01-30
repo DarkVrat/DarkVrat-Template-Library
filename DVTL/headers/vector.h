@@ -129,10 +129,10 @@ namespace DVTL
 		iterator& operator--()			{ --ptr; return *this; }
 		const iterator operator++(int)	{ iterator temp = *this; ++ptr; return temp; }
 		const iterator operator--(int)	{ iterator temp = *this; --ptr; return temp; }
-		iterator& operator+=(int n)		{ ptr += n; return *this; }
-		iterator& operator-=(int n)		{ ptr -= n; return *this; }
-		iterator operator+(int n) const	{ return iterator(ptr + n); }
-		iterator operator-(int n) const { return iterator(ptr - n); }
+		iterator& operator+=(size_t n)		{ ptr += n; return *this; }
+		iterator& operator-=(size_t n)		{ ptr -= n; return *this; }
+		iterator operator+(size_t n) const	{ return iterator(ptr + n); }
+		iterator operator-(size_t n) const	{ return iterator(ptr - n); }
 		auto operator-(const iterator& other) const -> decltype(auto) {
 			return ptr - other.ptr;
 		}
@@ -179,10 +179,10 @@ namespace DVTL
 		const_iterator& operator--()			{ --ptr; return *this; }
 		const const_iterator operator++(int)	{ const_iterator temp = *this; ++ptr; return temp; }
 		const const_iterator operator--(int)	{ const_iterator temp = *this; --ptr; return temp; }
-		const_iterator& operator+=(int n)		{ ptr += n; return *this; }
-		const_iterator& operator-=(int n)		{ ptr -= n; return *this; }
-		const_iterator operator+(int n) const	{ return const_iterator(ptr + n); }
-		const_iterator operator-(int n) const	{ return const_iterator(ptr - n); }
+		const_iterator& operator+=(size_t n)		{ ptr += n; return *this; }
+		const_iterator& operator-=(size_t n)		{ ptr -= n; return *this; }
+		const_iterator operator+(size_t n) const	{ return const_iterator(ptr + n); }
+		const_iterator operator-(size_t n) const	{ return const_iterator(ptr - n); }
 		auto operator-(const const_iterator& other) const -> decltype(auto) {
 			return ptr - other.ptr;
 		}
@@ -226,10 +226,10 @@ namespace DVTL
 		reverse_iterator& operator--()			{ ++ptr; return *this; }
 		const reverse_iterator operator++(int)	{ reverse_iterator temp = *this; --ptr; return temp; }
 		const reverse_iterator operator--(int)	{ reverse_iterator temp = *this; ++ptr; return temp; }
-		reverse_iterator& operator+=(int n)		{ ptr -= n; return *this; }
-		reverse_iterator& operator-=(int n)		{ ptr += n; return *this; }
-		reverse_iterator operator+(int n) const { return reverse_iterator(ptr - n); }
-		reverse_iterator operator-(int n) const { return reverse_iterator(ptr + n); }
+		reverse_iterator& operator+=(size_t n)		{ ptr -= n; return *this; }
+		reverse_iterator& operator-=(size_t n)		{ ptr += n; return *this; }
+		reverse_iterator operator+(size_t n) const	{ return reverse_iterator(ptr - n); }
+		reverse_iterator operator-(size_t n) const	{ return reverse_iterator(ptr + n); }
 		auto operator-(const reverse_iterator& other) const -> decltype(auto) {
 			return other.ptr - ptr;
 		}
@@ -275,10 +275,10 @@ namespace DVTL
 		const_reverse_iterator& operator--()			{ ++ptr; return *this; }
 		const const_reverse_iterator operator++(int)	{ const_reverse_iterator temp = *this; --ptr; return temp; }
 		const const_reverse_iterator operator--(int)	{ const_reverse_iterator temp = *this; ++ptr; return temp; }
-		const_reverse_iterator& operator+=(int n)		{ ptr -= n; return *this; }
-		const_reverse_iterator& operator-=(int n)		{ ptr += n; return *this; }
-		const_reverse_iterator operator+(int n) const	{ return const_reverse_iterator(ptr - n); }
-		const_reverse_iterator operator-(int n) const	{ return const_reverse_iterator(ptr + n); }
+		const_reverse_iterator& operator+=(size_t n)		{ ptr -= n; return *this; }
+		const_reverse_iterator& operator-=(size_t n)		{ ptr += n; return *this; }
+		const_reverse_iterator operator+(size_t n) const	{ return const_reverse_iterator(ptr - n); }
+		const_reverse_iterator operator-(size_t n) const	{ return const_reverse_iterator(ptr + n); }
 		auto operator-(const const_reverse_iterator& other) const -> decltype(auto) {
 			return other.ptr - ptr;
 		}
@@ -313,7 +313,7 @@ namespace DVTL
 	template<typename T>
 	inline Vector<T>::Vector(Initializer_list<T> init_list) : m_capacity(init_list.Size()), m_size(m_capacity), m_data(Allocator::Allocate<T>(m_capacity))
 	{
-		const T* beginInit = init_list.begin();
+		const T* beginInit = init_list.Begin();
 		for (size_t i = 0; i < m_size; i++)
 			Allocator::Construct(m_data, i, *(beginInit+i));
 	}
@@ -437,8 +437,8 @@ namespace DVTL
 		Clear();
 		if (init_list.size() > m_capacity) AllocateAndMove(init_list.size());
 
-		const T* beginInit = init_list.begin();
-		while (m_size < init_list.size()) {
+		const T* beginInit = init_list.Begin();
+		while (m_size < init_list.Size()) {
 			Allocator::Construct(m_data, m_size, *(beginInit + m_size));
 			++m_size;
 		}

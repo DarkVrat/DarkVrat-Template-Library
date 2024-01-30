@@ -1,8 +1,7 @@
 #ifndef DVTL_MAP_H
 #define DVTL_MAP_H
 
-#include "Utility.h"
-#include "Initializer_list.h"
+#include "Algorithm.h"
 
 namespace DVTL {
 template<typename T_Key, typename T_Value>
@@ -767,8 +766,6 @@ inline int Map<T_Key, T_Value>::getBalanceFactor(Node* node)
 		return 0;
 	return (getHeight(node->left) / (getHeight(node->right)+1)) - (getHeight(node->right) / (getHeight(node->left)+1));
 }
-
-
 
 }
 

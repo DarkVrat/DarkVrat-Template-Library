@@ -20,11 +20,6 @@ namespace DVTL
 		return static_cast<T&&>(obj);
 	}
 
-	template<typename T> inline void Swap(T& left, T& right) { left.Swap(right); }
-
-	template<typename T> inline T Max(const T& left, const T& right) { return left > right ? left : right; }
-	template<typename T> inline T Min(const T& left, const T& right) { return left < right ? left : right; }
-
 	template<typename T1, typename T2>
 	struct Pair {
 		T1 First;
