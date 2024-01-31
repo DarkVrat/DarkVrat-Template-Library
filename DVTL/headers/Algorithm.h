@@ -881,51 +881,6 @@ namespace DVTL {
 		return (first1 == last1) && (first2 != last2);
 	}
 
-	template<typename T_Iterator>
-	inline void Make_heap(T_Iterator first, T_Iterator last)
-	{
-		bool retry = true;
-		T_Iterator stop = first;
-		while (retry)
-		{
-			retry = false;
-
-			for (T_Iterator it(last + 1); it != stop; --it) {
-				T_Iterator parent(first + (it - first - 1) / 2);
-
-				if (*it > *parent) {
-					Iter_swap(it, parent);
-					retry = true;
-				}
-			}
-
-			stop = first + (stop - first + 1) * 2;
-		}
-	}
-
-	template<typename T_Iterator, typename T_Predicate>
-	inline void Make_heap(T_Iterator first, T_Iterator last, T_Predicate predicate)
-	{
-		bool retry = true;
-		T_Iterator stop = first;
-
-		while (retry)
-		{
-			retry = false;
-
-			for (T_Iterator it(last + 1); it != stop; --it) {
-				T_Iterator parent(first + (it - first - 1) / 2);
-
-				if (predicate(*it, *parent)) {
-					Iter_swap(it, parent);
-					retry = true;
-				}
-			}
-
-			stop = first + (stop - first + 1) * 2;
-		}
-	}
-
 	template<typename T_Type>
 	constexpr const T_Type& Max(const T_Type& left, const T_Type& right)
 	{
@@ -1170,7 +1125,7 @@ namespace DVTL {
 	}
 
 	template<typename T_Iterator1, typename T_Iterator2, typename T_IteratorOutput>
-	T_IteratorOutput Merge(T_Iterator1 first1, T_Iterator1 last1, T_Iterator2 first2, T_Iterator2 last2, T_IteratorOutput result)
+	inline T_IteratorOutput Merge(T_Iterator1 first1, T_Iterator1 last1, T_Iterator2 first2, T_Iterator2 last2, T_IteratorOutput result)
 	{
 		while (first1 != last1 && first2 != last2)
 		{
@@ -1206,7 +1161,7 @@ namespace DVTL {
 	}
 
 	template<typename T_Iterator1, typename T_Iterator2, typename T_IteratorOutput, typename T_Predicate>
-	T_IteratorOutput Merge(T_Iterator1 first1, T_Iterator1 last1, T_Iterator2 first2, T_Iterator2 last2, T_IteratorOutput result, T_Predicate predicate)
+	inline T_IteratorOutput Merge(T_Iterator1 first1, T_Iterator1 last1, T_Iterator2 first2, T_Iterator2 last2, T_IteratorOutput result, T_Predicate predicate)
 	{
 		while (first1 != last1 && first2 != last2)
 		{
@@ -1241,7 +1196,677 @@ namespace DVTL {
 		return result;
 	}
 
+	template<typename T_Iterator1, typename T_Iterator2>
+	inline Pair<T_Iterator1, T_Iterator2> Mismatch(T_Iterator1 first1, T_Iterator1 last1, T_Iterator2 first2)
+	{
+		while (first1 != last1 && *first1 == *first2)
+		{
+			++first1;
+			++first2;
+		}
 
+		return Pair<T_Iterator1, T_Iterator2>(first1, first2);
+	}
+
+	template<typename T_Iterator1, typename T_Iterator2, typename T_Predicate>
+	inline Pair<T_Iterator1, T_Iterator2> Mismatch(T_Iterator1 first1, T_Iterator1 last1, T_Iterator2 first2, T_Predicate predicate)
+	{
+		while (first1 != last1 && predicate(*first1, *first2))
+		{
+			++first1;
+			++first2;
+		}
+
+		return Pair<T_Iterator1, T_Iterator2>(first1, first2);
+	}
+
+	template<typename T_Iterator1, typename T_Iterator2>
+	inline Pair<T_Iterator1, T_Iterator2> Mismatch(T_Iterator1 first1, T_Iterator1 last1, T_Iterator2 first2, T_Iterator2 last2)
+	{
+		if ((last1 - first1) != (last2 - first2)) return Pair<T_Iterator1, T_Iterator2>(first1, first2);
+
+			while (first1 != last1 && *first1 == *first2)
+			{
+				++first1;
+				++first2;
+			}
+
+		return Pair<T_Iterator1, T_Iterator2>(first1, first2);
+	}
+
+	template<typename T_Iterator1, typename T_Iterator2, typename T_Predicate>
+	inline Pair<T_Iterator1, T_Iterator2> Mismatch(T_Iterator1 first1, T_Iterator1 last1, T_Iterator2 first2, T_Iterator2 last2, T_Predicate predicate)
+	{
+		if ((last1 - first1) != (last2 - first2)) return Pair<T_Iterator1, T_Iterator2>(first1, first2);
+
+		while (first1 != last1 && predicate(*first1, *first2))
+		{
+			++first1;
+			++first2;
+		}
+
+		return Pair<T_Iterator1, T_Iterator2>(first1, first2);
+	}
+
+	template<typename T_IteratorInput, typename T_IteratorOutput>
+	inline T_IteratorOutput Move(T_IteratorInput first, T_IteratorInput last, T_IteratorOutput output)
+	{
+		while (first != last)
+		{
+			output = Move(*first);
+
+			++first;
+			++output;
+		}
+
+		return output;
+	}
+
+	template<typename T_IteratorInput, typename T_IteratorOutput>
+	inline T_IteratorOutput Move_backward(T_IteratorInput first, T_IteratorInput last, T_IteratorOutput output)
+	{
+		while (first != last)
+		{
+			--last;
+			--output;
+			output = Move(*last);
+		}
+
+		return output;
+	}
+
+	/*template<typename T_Iterator>
+	inline bool Next_permutation(T_Iterator first, T_Iterator last){}
+	template<typename T_Iterator, typename T_Predicate>
+	inline bool Next_permutation(T_Iterator first, T_Iterator last, T_Predicate predicate){}*/
+
+	/*template<typename T_Iterator>
+	inline bool Prev_permutation(T_Iterator first, T_Iterator last) {}
+	template<typename T_Iterator, typename T_Predicate>
+	inline bool Prev_permutation(T_Iterator first, T_Iterator last, T_Predicate predicate) {}*/
+
+	template<typename T_Iterator, typename T_Predicate>
+	inline bool None_of(T_Iterator first, T_Iterator last, T_Predicate predicate)
+	{
+		while (first != last)
+		{
+			if (predicate(*first))
+				return false;
+
+			++first;
+		}
+		return true;
+	}
+
+	template<typename T_Iterator>
+	inline void Nth_element(T_Iterator first, T_Iterator nth, T_Iterator last)
+	{
+		--last;
+
+		while (first <= last)
+		{
+			while (*first < *nth)
+				++first;
+
+			while (*last > *nth)
+				--last;
+
+			if (first <= last)
+			{
+				Iter_swap(first, last);
+				++first;
+				--last;
+			}
+		}
+
+		Iter_swap(first, nth);
+	}
+
+	template<typename T_Iterator, typename T_Predicate>
+	inline void Nth_element(T_Iterator first, T_Iterator nth, T_Iterator last, T_Predicate predicate)
+	{
+		--last;
+
+		while (first <= last)
+		{
+			while (predicate(*first, *nth))
+				++first;
+
+			while (predicate(*nth, *last))
+				--last;
+
+			if (first <= last)
+			{
+				Iter_swap(first, last);
+				++first;
+				--last;
+			}
+		}
+
+		Iter_swap(first, nth);
+	}
+
+	template<typename T_Iterator>
+	inline void Partial_sort(T_Iterator first, T_Iterator sortEnd, T_Iterator last)
+	{
+		while (first != sortEnd)
+		{
+			T_Iterator min(first);
+			T_Iterator it(first);
+
+			while (it != last)
+			{
+				if (*it < *min)
+					min = it;
+
+				++it;
+			}
+
+			Iter_swap(first, min);
+
+			++first;
+		}
+	}
+
+	template<typename T_Iterator, typename T_Predicate>
+	inline void Partial_sort(T_Iterator first, T_Iterator sortEnd, T_Iterator last, T_Predicate predicate)
+	{
+		while (first != sortEnd)
+		{
+			T_Iterator temp(first);
+			T_Iterator it(first);
+
+			while (it != last)
+			{
+				if (predicate(*it, *temp))
+					temp = it;
+
+				++it;
+			}
+
+			Iter_swap(first, temp);
+
+			++first;
+		}
+	}
+
+	/*template<typename T_Iterator1, typename T_Iterator2>
+	inline T_Iterator2 Partial_sort_copy(T_Iterator1 first1, T_Iterator1 last1, T_Iterator2 first2, T_Iterator2 last2){}
+	template<typename T_Iterator1, typename T_Iterator2, typename T_Predicate>
+	inline T_Iterator2 Partial_sort_copy(T_Iterator1 first1, T_Iterator1 last1, T_Iterator2 first2, T_Iterator2 last2, T_Predicate predicate){}*/
+
+	template<typename T_Iterator, typename T_Predicate>
+	inline T_Iterator Partition(T_Iterator first, T_Iterator last, T_Predicate predicate)
+	{
+		if (first == last) return first;
+
+		--last;
+
+		while (first < last)
+		{
+			while (predicate(*first))
+				++first;
+
+			while (!predicate(*last))
+				--last;
+
+			if (last > first)
+				Iter_swap(first, last);
+		}
+
+		return first;
+	}
+
+	template<typename T_IteratorInput, typename T_IteratorOutput1, typename T_IteratorOutput2, typename T_Predicate>
+	inline Pair<T_IteratorOutput1, T_IteratorOutput2> Partition_copy(T_IteratorInput first, T_IteratorInput last, T_IteratorOutput1 out1, T_IteratorOutput2 out2, T_Predicate predicate)
+	{
+		while (first != last)
+		{
+			if (predicate(*first))
+			{
+				*out1 = *first;
+				++out1;
+			}
+			else
+			{
+				*out2 = *first;
+				++out2;
+			}
+
+			++first;
+		}
+		return Pair<T_IteratorOutput1, T_IteratorOutput2>(out1, out2);
+	}
+
+	template<typename T_Iterator, typename T_Predicate>
+	inline T_Iterator Partition_point(T_Iterator first, T_Iterator last, T_Predicate predicate)
+	{
+		while (first != last && predicate(*first))
+			++first;
+
+		return first;
+	}
+
+	template<typename T_Iterator>
+	inline void Push_heap(T_Iterator first, T_Iterator last)
+	{
+		if (first == last) return;
+		
+		--last;
+		size_t index = last - first;
+		size_t parent = (index - 1) / 2;
+		while (index > 0)
+		{
+			T_Iterator it_index = first + index;
+			T_Iterator it_parent = first + parent;
+			if (*it_index > *it_parent) {
+				Iter_swap(it_index, it_parent);
+				index = parent;
+				parent = (index - 1) / 2;
+			}
+			else
+				break;
+		}
+	}
+
+	template<typename T_Iterator, typename T_Predicate>
+	inline void Push_heap(T_Iterator first, T_Iterator last, T_Predicate predicate)
+	{
+		if (first == last) return;
+
+		--last;
+		size_t index = last - first;
+		size_t parent = (index - 1) / 2;
+		while (index>0)
+		{
+			T_Iterator it_index = first + index;
+			T_Iterator it_parent = first + parent;
+			if (predicate(*it_index, *it_parent)) {
+				Iter_swap(it_index, it_parent);
+				index = parent;
+				parent = (index - 1) / 2;
+			}
+			else
+				break;
+		}
+	}
+
+	template<typename T_Iterator>
+	inline void Pop_heap(T_Iterator first, T_Iterator last)
+	{
+		if (first == last) return;
+		Iter_swap(first, --last);
+		
+		size_t index = 0;
+		size_t left = 1;
+		size_t right = 2;
+		size_t Size = last - first;
+		while (left < Size) {
+			T_Iterator it_index = first + index;
+			T_Iterator it_left = first + left;
+			T_Iterator it_right = first + right;
+
+			if (right == Size) {
+				if(*it_left > *it_index)
+					Iter_swap(it_index, it_left);
+
+				break;
+			}
+
+			if (*it_index > *it_left)
+			{
+				if (*it_index > *it_right)
+					break;
+				else
+				{
+					Iter_swap(it_index, it_right);
+					index = right;
+				}
+			}
+			else
+			{
+				if (*it_index > *it_right)
+				{
+					Iter_swap(it_index, it_left);
+					index = left;
+				}
+				else
+				{
+					if (*it_right > *it_left)
+					{
+						Iter_swap(it_index, it_right);
+						index = right;
+					}
+					else
+					{
+						Iter_swap(it_index, it_left);
+						index = left;
+					}
+				}
+			}
+
+			left = index * 2 - 1;
+			right = index * 2;
+		}
+	}
+
+	template<typename T_Iterator, typename T_Predicate>
+	inline void Pop_heap(T_Iterator first, T_Iterator last, T_Predicate predicate)
+	{
+		if (first == last) return;
+		Iter_swap(first, --last);
+
+		size_t index = 0;
+		size_t left = 1;
+		size_t right = 2;
+		size_t Size = last - first;
+		while (left < Size) {
+			T_Iterator it_index = first + index;
+			T_Iterator it_left = first + left;
+			T_Iterator it_right = first + right;
+
+			if (right == Size) {
+				if (predicate(*it_left, *it_index))
+					Iter_swap(it_index, it_left);
+
+				break;
+			}
+
+			if (predicate(*it_index, *it_left))
+			{
+				if (predicate(*it_index, *it_right))
+					break;
+				else
+				{
+					Iter_swap(it_index, it_right);
+					index = right;
+				}
+			}
+			else
+			{
+				if (predicate(*it_index, *it_right))
+				{
+					Iter_swap(it_index, it_left);
+					index = left;
+				}
+				else
+				{
+					if (predicate(*it_right, *it_left))
+					{
+						Iter_swap(it_index, it_right);
+						index = right;
+					}
+					else
+					{
+						Iter_swap(it_index, it_left);
+						index = left;
+					}
+				}
+			}
+
+			left = index * 2 - 1;
+			right = index * 2;
+		}
+	}
+
+	template<typename T_Iterator>
+	inline void Make_heap(T_Iterator first, T_Iterator last)
+	{
+		T_Iterator it=first+1;
+		while (it != last) 
+		{
+			Push_heap(first, it);
+			++it;
+		}
+	}
+
+	template<typename T_Iterator, typename T_Predicate>
+	inline void Make_heap(T_Iterator first, T_Iterator last, T_Predicate predicate)
+	{
+		T_Iterator it = first + 1;
+		while (it != last)
+		{
+			Push_heap(first, it, predicate);
+			++it;
+		}
+	}
+
+	template<typename T_Iterator, typename T_Type>
+	inline T_Iterator Remove(T_Iterator first, T_Iterator last, const T_Type& value) 
+	{
+		T_Iterator it = first;
+		
+		while (it != last)
+		{
+			if (*it == value)
+				++it;
+			else
+			{
+				*first = *it;
+				++first;
+				++it;
+			}
+		}
+
+		return first;
+	}
+
+	template<typename T_IteratorInput, typename T_IteratorOutput, typename T_Type>
+	inline T_IteratorOutput Remove_copy(T_IteratorInput first, T_IteratorInput last, T_IteratorOutput result, const T_Type& value)
+	{
+		while (first != last)
+		{
+			if (*first != value)
+			{
+				*result = *first;
+				++result;
+			}
+			++first;
+		}
+		return result;
+	}
+
+	template<typename T_IteratorInput, typename T_IteratorOutput, typename T_Predicate>
+	inline T_IteratorOutput Remove_copy_if(T_IteratorInput first, T_IteratorInput last, T_IteratorOutput result, T_Predicate predicate)
+	{
+		while (first != last)
+		{
+			if (!predicate(*first))
+			{
+				*result = *first;
+				++result;
+			}
+			++first;
+		}
+		return result;
+	}
+
+	template<typename T_Iterator, typename T_Predicate>
+	inline T_Iterator Remove_if(T_Iterator first, T_Iterator last, T_Predicate predicate)
+	{
+		T_Iterator it = first;
+
+		while (it != last)
+		{
+			if (predicate(*it))
+				++it;
+			else
+			{
+				*first = *it;
+				++first;
+				++it;
+			}
+		}
+
+		return first;
+	}
+
+	template<typename T_Iterator, typename T_Type>
+	inline void Replace(T_Iterator first, T_Iterator last, const T_Type& oldVal, const T_Type& newVal)
+	{
+		while (first != last)
+		{
+			if (*first == oldVal)
+				*first = newVal;
+
+			++first;
+		}
+	}
+
+	template<typename T_Iterator, typename T_IteratorOutput, typename T_Type>
+	inline T_IteratorOutput Replace_copy(T_Iterator first, T_Iterator last, T_IteratorOutput result, const T_Type& oldVal, const T_Type& newVal)
+	{
+		while (first != last)
+		{
+			if (*first == oldVal)
+				*result = newVal;
+			else
+				*result = *first;
+
+			++result;
+			++first;
+		}
+
+		return result;
+	}
+
+	template<typename T_Iterator, typename T_IteratorOutput, typename T_Type, typename T_Predicate>
+	inline T_IteratorOutput Replace_copy_if(T_Iterator first, T_Iterator last, T_IteratorOutput result, T_Predicate predicate, const T_Type& value)
+	{
+		while (first != last)
+		{
+			if (predicate(*first))
+				*result = value;
+			else
+				*result = *first;
+
+			++result;
+			++first;
+		}
+
+		return result;
+	}
+
+	template<typename T_Iterator, typename T_Type, typename T_Predicate>
+	inline void Replace_if(T_Iterator first, T_Iterator last, T_Predicate predicate, const T_Type& value)
+	{
+		while (first != last)
+		{
+			if (predicate(*first))
+				*first = value;
+
+			++first;
+		}
+	}
+
+	template<typename T_Iterator>
+	inline void Reverse(T_Iterator first, T_Iterator last)
+	{
+		if (first == last) return;
+
+		--last;
+
+		while (last > first)
+		{
+			Iter_swap(first, last);
+			++first;
+			--last;
+		}
+	}
+
+	template<typename T_Iterator, typename T_IteratorOutput>
+	inline void Reverse_copy(T_Iterator first, T_Iterator last, T_IteratorOutput result)
+	{
+		while (last != first)
+		{
+			--last;
+			*result = *last;
+			++result;
+		}
+	}
+
+	template<typename T_Iterator>
+	inline void Rotate(T_Iterator first, T_Iterator middle, T_Iterator last)
+	{
+		
+	}
+
+	template<typename T_Iterator, typename T_IteratorOutput>
+	inline T_IteratorOutput Rotate_copy(T_Iterator first, T_Iterator middle, T_Iterator last, T_IteratorOutput result)
+	{
+		
+	}
+
+	/*template<typename T_Iterator1, typename T_Iterator2>
+	inline T_Iterator1 Search(T_Iterator1 first1, T_Iterator1 last1, T_Iterator2 first2, T_Iterator2 last2){}
+	template<typename T_Iterator1, typename T_Iterator2, typename T_Predicate>
+	inline T_Iterator1 Search(T_Iterator1 first1, T_Iterator1 last1, T_Iterator2 first2, T_Iterator2 last2, T_Predicate predicate){}*/
+
+	/*template<typename T_Iterator, typename T_Type>
+	inline T_Iterator Search_n(T_Iterator first, T_Iterator last, size_t count, const T_Type& value) {}
+	template<typename T_Iterator, typename T_Type, typename T_Predicate>
+	inline T_Iterator Search_n(T_Iterator first, T_Iterator last, size_t count, const T_Type& value, T_Predicate predicate) {}*/
+
+	/*template<typename T_Iterator1, typename T_Iterator2, typename T_IteratorOutput>
+	inline T_IteratorOutput Set_difference(T_Iterator1 first1, T_Iterator1 last1, T_Iterator2 first2, T_Iterator2 last2, T_IteratorOutput result) {}
+	template<typename T_Iterator1, typename T_Iterator2, typename T_IteratorOutput, typename T_Predicate>
+	inline T_IteratorOutput Set_difference(T_Iterator1 first1, T_Iterator1 last1, T_Iterator2 first2, T_Iterator2 last2, T_IteratorOutput result, T_Predicate predicate) {}*/
+
+	/*template<typename T_Iterator1, typename T_Iterator2, typename T_IteratorOutput>
+	inline T_IteratorOutput Set_intersection(T_Iterator1 first1, T_Iterator1 last1, T_Iterator2 first2, T_Iterator2 last2, T_IteratorOutput result) {}
+	template<typename T_Iterator1, typename T_Iterator2, typename T_IteratorOutput, typename T_Predicate>
+	inline T_IteratorOutput Set_intersection(T_Iterator1 first1, T_Iterator1 last1, T_Iterator2 first2, T_Iterator2 last2, T_IteratorOutput result, T_Predicate predicate) {}*/
+
+	/*template<typename T_Iterator1, typename T_Iterator2, typename T_IteratorOutput>
+	inline T_IteratorOutput Set_symmetric_difference(T_Iterator1 first1, T_Iterator1 last1, T_Iterator2 first2, T_Iterator2 last2, T_IteratorOutput result) {}
+	template<typename T_Iterator1, typename T_Iterator2, typename T_IteratorOutput, typename T_Predicate>
+	inline T_IteratorOutput Set_symmetric_difference(T_Iterator1 first1, T_Iterator1 last1, T_Iterator2 first2, T_Iterator2 last2, T_IteratorOutput result, T_Predicate predicate) {}*/
+
+	/*template<typename T_Iterator1, typename T_Iterator2, typename T_IteratorOutput>
+	inline T_IteratorOutput Set_union(T_Iterator1 first1, T_Iterator1 last1, T_Iterator2 first2, T_Iterator2 last2, T_IteratorOutput result) {}
+	template<typename T_Iterator1, typename T_Iterator2, typename T_IteratorOutput, typename T_Predicate>
+	inline T_IteratorOutput Set_union(T_Iterator1 first1, T_Iterator1 last1, T_Iterator2 first2, T_Iterator2 last2, T_IteratorOutput result, T_Predicate predicate) {}*/
+
+	/*template<typename T_Iterator>
+	inline void Sort(T_Iterator first, T_Iterator last) {}
+	template<typename T_Iterator, typename T_Predicate>
+	inline void Sort(T_Iterator first, T_Iterator last, T_Predicate predicate) {}*/
+
+	/*template<typename T_Iterator>
+	inline void Sort_heap(T_Iterator first, T_Iterator last) {}
+	template<typename T_Iterator, typename T_Predicate>
+	inline void Sort_heap(T_Iterator first, T_Iterator last, T_Predicate predicate) {}*/
+
+	/*template<typename T_Iterator, typename T_Predicate>
+	inline void Stable_partition(T_Iterator first, T_Iterator last, T_Predicate predicate) {}*/
+
+	/*template<typename T_Iterator>
+	inline void Stable_sort(T_Iterator first, T_Iterator last) {}
+	template<typename T_Iterator, typename T_Predicate>
+	inline void Stable_sort(T_Iterator first, T_Iterator last, T_Predicate predicate) {}*/
+
+	/*template<typename T_Type>
+	inline void Swap(T_Type& left, T_Type& right) {}
+	template<typename T_Type, size_t N>
+	inline void Swap(T_Type (&left)[N], T_Type (&right)[N]) {}*/
+
+	/*template<typename T_Iterator1, typename T_Iterator2>
+	inline void Swap_ranges(T_Iterator1 first1, T_Iterator1 last1, T_Iterator2 first2) {}*/
+
+	/*template<typename T_Iterator, typename T_IteratorOutput, typename T_Predicate>
+	inline T_IteratorOutput Transform(T_Iterator first, T_Iterator last, T_IteratorOutput result, T_Predicate predicate) {}
+	template<typename T_Iterator1, typename T_Iterator2, typename T_IteratorOutput, typename T_Predicate>
+	inline T_IteratorOutput Transform(T_Iterator1 first1, T_Iterator1 last1, T_Iterator2 first2, T_IteratorOutput result, T_Predicate predicate) {}*/
+
+	/*template<typename T_Iterator>
+	inline T_Iterator Unique(T_Iterator first, T_Iterator last) {}
+	template<typename T_Iterator, typename T_Predicate>
+	inline T_Iterator Unique(T_Iterator first, T_Iterator last, T_Predicate predicate) {}*/
+
+	/*template<typename T_Iterator, typename T_Iterator2>
+	inline T_Iterator2 Unique_copy(T_Iterator first, T_Iterator last, T_Iterator2 result) {}
+	template<typename T_Iterator, typename T_Iterator2, typename T_Predicate>
+	inline T_Iterator2 Unique_copy(T_Iterator first, T_Iterator last, T_Iterator2 result, T_Predicate predicate) {}*/
 }
 
 #endif // !DVTL_ALGORITHM_H
