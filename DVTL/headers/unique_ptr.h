@@ -120,6 +120,12 @@ namespace DVTL
     {
         return m_storage;
     }
+
+    template<typename T>
+    inline void Swap(Unique_ptr<T>& left, Unique_ptr<T>& right)
+    {
+        left.Swap(right);
+    }
 }
 
 #endif // !DVTL_UNIQUE_PTR_H

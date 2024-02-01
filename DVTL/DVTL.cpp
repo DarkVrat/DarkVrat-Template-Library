@@ -16,14 +16,18 @@ void coutVec(const T_Vector& vec) {
 }
 
 int main() {
-    DVTL::Vector<int> vecint(DVTL::Initializer_list<int>({ 4, 5,1, 6, 1, -4, 7,1, 3,1, 7, 43, -14}));
+    DVTL::Vector<int> vecint(DVTL::Initializer_list<int>({ 1, 1, 77, 8, 42, 76, 61, 9, 86, 41, 70, 1 }));
 
     coutVec(vecint);
-    DVTL::Make_heap(vecint.Begin(), vecint.End());
+    DVTL::Stable_partition(vecint.Begin(), vecint.End(), [](int a) {return a % 2 == 0; });
     coutVec(vecint);
-   
-    DVTL::Remove(vecint.Begin(), vecint.End(), 1);
+    DVTL::Next_permutation(vecint.Begin(), vecint.End());
     coutVec(vecint);
+    DVTL::Prev_permutation(vecint.Begin(), vecint.End());
+    coutVec(vecint);
+
+    
+    
 
     return 0;
 }

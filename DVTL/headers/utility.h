@@ -67,6 +67,12 @@ namespace DVTL
 		Second = temp_s;
 	}
 
+	template<typename T1, typename T2>
+	inline void Swap(Pair<T1, T2>& left, Pair<T1, T2>& right)
+	{
+		left.Swap(right);
+	}
+
 	template<typename T>				bool Less(const T& left, const T& right)						{ return left < right; }
 	template<typename T1, typename T2>	bool Less(const Pair<T1, T2>& left, const Pair<T1, T2>& right)	{return left.First < right.First;}
 

@@ -767,6 +767,12 @@ inline int Map<T_Key, T_Value>::getBalanceFactor(Node* node)
 	return (getHeight(node->left) / (getHeight(node->right)+1)) - (getHeight(node->right) / (getHeight(node->left)+1));
 }
 
+template<typename T_Key, typename T_Value>
+inline void Swap(Map<T_Key, T_Value>& left, Map<T_Key, T_Value>& right)
+{
+	left.Swap(right);
+}
+
 }
 
 #endif // !DVTL_MAP_H

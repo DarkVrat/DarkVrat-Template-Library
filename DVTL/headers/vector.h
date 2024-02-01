@@ -667,6 +667,12 @@ namespace DVTL
 	{
 		return capacity + capacity/2 + 1;
 	}
+
+	template<typename T>
+	inline void Swap(Vector<T>& left, Vector<T>& right)
+	{
+		left.Swap(right);
+	}
 }
 
 #endif // !DVTL_VECTOR_H

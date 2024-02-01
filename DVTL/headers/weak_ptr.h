@@ -229,6 +229,12 @@ namespace DVTL {
 		m_data = nullptr;
 		m_Control_block_ptr = nullptr;
 	}
+
+	template<typename T>
+	inline void Swap(Weak_ptr<T>& left, Weak_ptr<T>& right)
+	{
+		left.Swap(right);
+	}
 }
 
 #endif // !DVTL_WEAK_PTR_H

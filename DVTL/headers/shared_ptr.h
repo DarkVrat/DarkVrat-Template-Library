@@ -355,6 +355,12 @@ namespace DVTL {
 		}
 	}
 
+	template<typename T>
+	inline void Swap(Shared_ptr<T>& left, Shared_ptr<T>& right)
+	{
+		left.Swap(right);
+	}
+
 }
 
 #endif // !DVTL_SHARED_PTR_H
