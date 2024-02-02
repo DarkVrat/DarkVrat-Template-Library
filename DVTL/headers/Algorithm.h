@@ -569,7 +569,7 @@ namespace DVTL {
 		
 		if (*last2 <= *middle) return;
 
-		while (first != last2 && middle != last)
+		while (first <= last2 && middle != last)
 		{
 			if (*first <= *middle)
 				++first;
@@ -1288,51 +1288,41 @@ namespace DVTL {
 	}
 
 	template<typename T_Iterator>
-	inline void Nth_element(T_Iterator first, T_Iterator nth, T_Iterator last)
+	inline T_Iterator Nth_element(T_Iterator first, T_Iterator nth, T_Iterator last)
 	{
 		--last;
+		Iter_swap(nth, last);
+		nth = last;
 
-		while (first <= last)
-		{
-			while (*first < *nth)
-				++first;
-
-			while (*last > *nth)
-				--last;
-
-			if (first <= last)
-			{
-				Iter_swap(first, last);
-				++first;
-				--last;
+		T_Iterator i = first;
+		for (T_Iterator j = first; j < last; ++j) {
+			if (*j <= *nth) {
+				Iter_swap(i, j);
+				++i;
 			}
 		}
 
-		Iter_swap(first, nth);
+		Iter_swap(i, last);
+		return i;
 	}
 
 	template<typename T_Iterator, typename T_Predicate>
-	inline void Nth_element(T_Iterator first, T_Iterator nth, T_Iterator last, T_Predicate predicate)
+	inline T_Iterator Nth_element(T_Iterator first, T_Iterator nth, T_Iterator last, T_Predicate predicate)
 	{
 		--last;
+		Iter_swap(nth, last);
+		nth = last;
 
-		while (first <= last)
-		{
-			while (predicate(*first, *nth))
-				++first;
-
-			while (predicate(*nth, *last))
-				--last;
-
-			if (first <= last)
-			{
-				Iter_swap(first, last);
-				++first;
-				--last;
+		T_Iterator i = first;
+		for (T_Iterator j = first; j < last; ++j) {
+			if (predicate(*j, *nth)) {
+				Iter_swap(i, j);
+				++i;
 			}
 		}
 
-		Iter_swap(first, nth);
+		Iter_swap(i, last);
+		return i;
 	}
 
 	template<typename T_Iterator>
@@ -2508,20 +2498,167 @@ namespace DVTL {
 		}
 	}
 
-	/*template<typename T_Iterator1, typename T_Iterator2>
-	inline T_Iterator2 Partial_sort_copy(T_Iterator1 first1, T_Iterator1 last1, T_Iterator2 first2, T_Iterator2 last2){}
+	template<typename T_Iterator1, typename T_Iterator2>
+	inline T_Iterator2 Partial_sort_copy(T_Iterator1 first1, T_Iterator1 last1, T_Iterator2 first2, T_Iterator2 last2)
+	{
+		if (first1 == last1 || first2 == last2) return last2;
+
+		T_Iterator1 current = first1;
+		T_Iterator1 lastMin = first1;
+		T_Iterator1 Max = first1;
+
+		while (current != last1)
+		{
+			if (*current < *lastMin)
+				lastMin = current;
+
+			if (*Max < *current)
+				Max = current;
+
+			++current;
+		}
+
+		*first2 = *lastMin;
+		++first2;
+
+		while (first2 != last2)
+		{
+			T_Iterator1 Min = Max;
+			current = first1;
+
+			while (current != last1)
+			{
+				if (*current < *Min)
+				{
+					if (*lastMin < *current) Min = current;
+					else if (*lastMin == *current && current > lastMin)
+					{
+						Min = current;
+						break;
+					}
+				}
+
+				++current;
+			}
+
+			*first2 = *Min;
+			lastMin = Min;
+			++first2;
+		}
+		return first2;
+	}
+
 	template<typename T_Iterator1, typename T_Iterator2, typename T_Predicate>
-	inline T_Iterator2 Partial_sort_copy(T_Iterator1 first1, T_Iterator1 last1, T_Iterator2 first2, T_Iterator2 last2, T_Predicate predicate){}*/
+	inline T_Iterator2 Partial_sort_copy(T_Iterator1 first1, T_Iterator1 last1, T_Iterator2 first2, T_Iterator2 last2, T_Predicate predicate)
+	{
+		if (first1 == last1 || first2 == last2) return last2;
 
-	/*template<typename T_Iterator>
-	inline void Sort(T_Iterator first, T_Iterator last) {}
-	template<typename T_Iterator, typename T_Predicate>
-	inline void Sort(T_Iterator first, T_Iterator last, T_Predicate predicate) {}*/
+		T_Iterator1 current = first1;
+		T_Iterator1 lastMin = first1;
+		T_Iterator1 Max = first1;
 
-	/*template<typename T_Iterator>
-	inline void Stable_sort(T_Iterator first, T_Iterator last){}
+		while (current != last1)
+		{
+			if (predicate(*current, *lastMin))
+				lastMin = current;
+
+			if (predicate(*Max, *current))
+				Max = current;
+
+			++current;
+		}
+
+		*first2 = *lastMin;
+		++first2;
+
+		while (first2 != last2)
+		{
+			T_Iterator1 Min = Max;
+			current = first1;
+
+			while (current != last1)
+			{
+				if (predicate(*current, *Min))
+				{
+					if (predicate(*lastMin, *current)) Min = current;
+					else if (!(predicate(*lastMin, *current) || predicate(*current, *lastMin)) && current > lastMin)
+					{
+						Min = current;
+						break;
+					}
+				}
+
+				++current;
+			}
+
+			*first2 = *Min;
+			lastMin = Min;
+			++first2;
+		}
+		return first2;
+	}
+
+	template<typename T_Iterator>
+	inline void Sort(T_Iterator first, T_Iterator last)
+	{
+		if (last - first < 6)
+		{
+			Partial_sort(first, last, last);
+			return;
+		}
+
+		T_Iterator nth = first + (last - first) / 2;
+		nth = Nth_element(first, nth, last);
+
+		Sort(first, nth);
+		Sort(nth + 1, last);
+	}
+
 	template<typename T_Iterator, typename T_Predicate>
-	inline void Stable_sort(T_Iterator first, T_Iterator last, T_Predicate predicate){}*/
+	inline void Sort(T_Iterator first, T_Iterator last, T_Predicate predicate)
+	{
+		if (last - first < 6)
+		{
+			Partial_sort(first, last, last, predicate);
+			return;
+		}
+
+		T_Iterator nth = first + (last - first) / 2;
+		nth = Nth_element(first, nth, last, predicate);
+
+		Sort(first, nth, predicate);
+		Sort(nth + 1, last, predicate);
+	}
+
+	template<typename T_Iterator>
+	inline void Stable_sort(T_Iterator first, T_Iterator last)
+	{
+		size_t size = last-first;
+
+		if (size > 1) {
+			T_Iterator middle = first + size / 2;
+
+			Stable_sort(first, middle);
+			Stable_sort(middle, last);
+
+			Inplace_merge(first, middle, last);
+		}
+	}
+
+	template<typename T_Iterator, typename T_Predicate>
+	inline void Stable_sort(T_Iterator first, T_Iterator last, T_Predicate predicate)
+	{
+		size_t size = last - first;
+
+		if (size > 1) {
+			T_Iterator middle = first + size / 2;
+
+			Stable_sort(first, middle, predicate);
+			Stable_sort(middle, last, predicate);
+
+			Inplace_merge(first, middle, last, predicate);
+		}
+	}
 }
 
 #endif // !DVTL_ALGORITHM_H
